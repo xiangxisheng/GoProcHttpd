@@ -15,22 +15,36 @@
 <body onload="window.index()">
 
   <div id="app">
-    数量：
-    <input v-model='config.count' style="width:50px">
-    <button v-on:click="click1">生成帐号</button>
+    <button v-on:click="click1">刷新数据</button>
     <hr/>
-    <table class="table1">
-      <tr align="center">
-        <td width="200">邮箱</td>
-        <td width="100">姓</td>
-        <td width="100">名</td>
-      </tr>
-      <tr align="center" v-for="row of rows" :key="row.id">
-        <td>{{row.email}}</td>
-        <td>{{row.firstName}}</td>
-        <td>{{row.lastName}}</td>
-      </tr>
-    </table>
+    项目：<select v-model='config.project'>
+      <option v-if="table.project" value="">--选择项目--</option>
+      <option v-for="row of table.project" :value="row.name">
+        {{row.name}} ({{row.title}})
+      </option>
+    </select>
+    <hr/>
+    模块：<select v-model='config.module'>
+      <option v-if="PMOA.project[config.project]" value="">--选择模块--</option>
+      <option v-for="row of PMOA.project[config.project]" :value="row.name">
+        {{row.name}} ({{row.title}})
+      </option>
+    </select>
+    <hr/>
+    对象：<select v-model='config.object'>
+      <option v-if="PMOA.module[config.project+'_'+config.module]" value="">--选择对象--</option>
+      <option v-for="row of PMOA.module[config.project+'_'+config.module]" :key="row.name" :value="row.name">
+        {{row.name}} ({{row.title}})
+      </option>
+    </select>
+    <hr/>
+    行为：<select v-model='config.action'>
+      <option v-if="PMOA.object[config.project+'_'+config.module+'_'+config.object]" value="">--选择行为--</option>
+      <option v-for="row of PMOA.object[config.project+'_'+config.module+'_'+config.object]" :key="row.name" :value="row.name">
+        {{row.name}} ({{row.title}})
+      </option>
+    </select>
+    <hr/>
   </div>
 
 </body>
