@@ -6,6 +6,9 @@ import (
 )
 
 func GetTypeByBytes(rawBytes sql.RawBytes)string {
+    if len(rawBytes) == 0 {
+        return "string"
+    }
     if rawBytes == nil {
         return "nil"
     }

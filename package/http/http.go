@@ -2,6 +2,9 @@ package http
 
 import (
     "fmt"
+    "os"
+    "strings"
+    "time"
     "net/http"
     //"github.com/tidwall/gjson"
     "../../package/db"
@@ -10,10 +13,22 @@ import (
 var err error
 var http_handler http.Handler
 
-func checkErr(err error) {
+func checkErr(err error, title string) bool {
     if err != nil {
+        date := time.Now().Format("15:04:05.999")
+        var msg string = ErrorMsg(err.Error())
+        fmt.Fprintf(os.Stderr, "[Error] %s %s %s\n", date, title, msg)
+        return true
         panic(err.Error()) // proper error handling instead of panic in your app
     }
+    return false
+}
+
+func ErrorMsg(msg string) string {
+    if strings.Contains(msg, "bind: Only one usage") {
+        msg = "端口被占用"
+    }
+    return msg
 }
 
 func ListenAndServe() {
@@ -25,7 +40,7 @@ func ListenAndServe() {
     http.Handle("/css/", http.FileServer(http.Dir("template")))
     http.Handle("/js/", http.FileServer(http.Dir("template")))
     http.HandleFunc("/proc", HandlerProc)
-    if false{
+    if false {
         http.HandleFunc("/", HandlerRoot)
     } else {
         http.Handle("/", http.FileServer(http.Dir("template/html")))
@@ -35,7 +50,7 @@ func ListenAndServe() {
     listen_sockets := "0.0.0.0:3380"
     fmt.Printf("http.ListenAndServe At %s\n", listen_sockets)
     err = http.ListenAndServe(listen_sockets, http_handler)
-    checkErr(err)
+    if checkErr(err, "http.ListenAndServe") { return }
 
 }
 

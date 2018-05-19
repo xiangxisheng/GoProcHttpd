@@ -18,6 +18,25 @@ window.index=function(){
     }
     return rows
   }
+  var LTrim = function(str) {
+    str = str.replace(/(^\s*)/g, "")
+    str = str.replace(/(^\_*)/g, "")
+    return str;
+  }
+  var getParams = function (PARAMETERS) {
+    const ret = []
+    const params = PARAMETERS.split(',')
+    for (var i = 0; i < params.length; i++) {
+      const param = params[i].split('|')
+      if (param.length < 3) continue
+      row = {}
+      row['name'] = LTrim(param[0])
+      row['title'] = dictionary_name_to_title(row['name'])
+      row['type'] = param[1]
+      ret.push(row)
+    }
+    return ret
+  }
   var dictionary_name_to_title = function(name) {
     var obj = {};
     obj['firadio_uc'] = '认证中心';
@@ -36,6 +55,12 @@ window.index=function(){
     obj['cdn'] = '分布式节点'
     obj['balance'] = '余额'
     obj['qquin'] = 'QQ号码'
+    obj['username'] = '用户名'
+    obj['time3600'] = '小时号'
+    obj['days'] = '天数'
+    obj['lastseconds'] = '最近秒数'
+    obj['hour'] = '小时'
+    obj['file'] = '文件'
     if (obj.hasOwnProperty(name)) {
       return obj[name];
     }
@@ -69,6 +94,10 @@ window.index=function(){
       click1: function () {
         this.update()
       },
+      click2: function () {
+        var t = this.PMOA.action[this.config_pmoa()]
+        alert(JSON.stringify(t))
+      },
       update: function () {
         this.$http.get('/proc', {}).then(function (res) {
           // alert(res.data)
@@ -98,9 +127,7 @@ window.index=function(){
       procTable: function (tableObj) {
         for (var key in tableObj) {
           const row = tableObj[key]
-          console.log(row.SPECIFIC_NAME)
           if (!this.procRow(row)) {
-            
             continue
           }
           
@@ -134,10 +161,10 @@ window.index=function(){
             obj.name = row.action
             obj.title = dictionary_name_to_title(obj.name)
             this.PMOA.object[row.SPECIFIC_SCHEMA + '_' + row.module + '_' + row.object].push(obj)
-            this.PMOA.action[key] = []
+            this.PMOA.action[key] = getParams(row.PARAMETERS)
           }
         }
-        console.log(this.PMOA)
+        // console.log(this.PMOA)
       },
       procRow: function (row) {
         arr = row.SPECIFIC_NAME.split('_')
@@ -148,6 +175,15 @@ window.index=function(){
         if (arr.length <= 3) return false
         row.action = arr[3]
         return true
+      },
+      config_pmoa: function () {
+        return this.config.project + '_' + this.config.module + '_' + this.config.object + '_' + this.config.action
+      },
+      exist_pmoa: function () {
+        return this.PMOA.action.hasOwnProperty(this.config_pmoa())
+      },
+      count_param: function () {
+        return this.PMOA.action[this.config_pmoa()].length
       }
     }
   })

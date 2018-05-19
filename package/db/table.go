@@ -11,15 +11,15 @@ type Table struct {
     Rows [][]interface{}
 }
 
-func GetTableBySql(sqlstr string) Table {
+func GetTableBySql(sqlstr string) (Table, error) {
+    var table Table = Table{}
     // Execute the query
     rows, err := sqlDB.Query(sqlstr)
-    checkErr(err)
-    var table Table=Table{}
+    if checkErr(err, "sqlDB.Query") { return table, err }
     var table_rows [][]interface{}
     // Get column names
     columns, err := rows.Columns()
-    checkErr(err)
+    if checkErr(err, "rows.Columns") { return table, err }
     table.Columns = columns
     // Make a slice for the values
     values := make([]sql.RawBytes, len(columns))
@@ -35,7 +35,7 @@ func GetTableBySql(sqlstr string) Table {
         // get RawBytes from data
         if true{
             err = rows.Scan(scanArgs...)
-            checkErr(err)
+            if checkErr(err, "rows.Scan") { return table, err }
         }
         // Now do something with the data.
         // Here we just print each column as a string.
@@ -48,8 +48,8 @@ func GetTableBySql(sqlstr string) Table {
                     value = nil
                     break
                 case "num":
-                    value,err = strconv.Atoi(string(col))
-                    //checkErr(err)
+                    value, err = strconv.Atoi(string(col))
+                    if checkErr(err, "strconv.Atoi") { return table, err }
                     break
                 case "string":
                     value = string(col)
@@ -65,11 +65,14 @@ func GetTableBySql(sqlstr string) Table {
         }
         table_rows = append(table_rows, sValues)
     }
+    err = rows.Err()
+    if checkErr(err, "rows.Err") { return table, err }
+    /*
     if err = rows.Err(); err != nil {
         panic(err.Error()) // proper error handling instead of panic in your app
-    }
+    }//*/
     rows.Close()
     table.Rows = table_rows
-    return table
+    return table, err
 }
 

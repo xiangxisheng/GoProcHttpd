@@ -10,22 +10,22 @@ func HandlerProc(w http.ResponseWriter, req *http.Request) {
     outputData := GetOutputData(req)
     req.ParseForm()
     proc := req.FormValue("proc")
-    if proc==""{
-        outputData.Table = db.GetParamData()
+    if proc == "" {
+        outputData.Table, err = db.GetParamData()
         //outputData.Message="请提供proc"
         WriteJSON(w, outputData)
         return
     }
     //outputData.Data = make(map[interface{}]interface{})
     //outputData.Data["123"] = 123;
-    outputData.Table = db.GetProcData(proc)
+    outputData.Table, err = db.GetProcData(proc)
     //fmt.Println(outputData)
     WriteJSON(w, outputData)
 }
 
 func HandlerRoot(w http.ResponseWriter, req *http.Request) {
     t, err := template.ParseFiles("template/html/index.html")
-    checkErr(err)
+    if checkErr(err, "template.ParseFiles") { return }
     t.Execute(w, nil)
 }
 

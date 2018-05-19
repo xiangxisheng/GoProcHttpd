@@ -19,14 +19,14 @@
     <hr/>
     项目：<select v-model='config.project'>
       <option v-if="table.project" value="">--选择项目--</option>
-      <option v-for="row of table.project" :value="row.name">
+      <option v-for="row of table.project" :key="row.name" :value="row.name">
         {{row.name}} ({{row.title}})
       </option>
     </select>
     <hr/>
     模块：<select v-model='config.module'>
       <option v-if="PMOA.project[config.project]" value="">--选择模块--</option>
-      <option v-for="row of PMOA.project[config.project]" :value="row.name">
+      <option v-for="row of PMOA.project[config.project]" :key="row.name" :value="row.name">
         {{row.name}} ({{row.title}})
       </option>
     </select>
@@ -44,6 +44,25 @@
         {{row.name}} ({{row.title}})
       </option>
     </select>
+    <hr/>
+    <table cellpadding="4" class="table1" v-if="exist_pmoa()">
+      <tr align="center" v-if="count_param() > 0">
+        <td>参数名</td>
+        <td>输入框</td>
+        <td>说明</td>
+      </tr>
+      <tr align="center" v-if="count_param() == 0">
+        <td colspan="3">该行为不需要提供任何参数</td>
+      </tr>
+      <tr align="center" v-for="row of PMOA.action[config.project+'_'+config.module+'_'+config.object+'_'+config.action]" :key="row.name">
+        <td>{{row.name}}</td>
+        <td><input v-model="row.value" value="" /></td>
+        <td>{{row.title}}</td>
+      </tr>
+      <tr align="center">
+        <td colspan="3"><button v-on:click="click2">立即查询</button></td>
+      </tr>
+    </table>
     <hr/>
   </div>
 
