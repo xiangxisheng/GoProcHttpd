@@ -9,7 +9,7 @@
   <!-- 生产环境版本，优化了尺寸和速度 -->
   <!--<script src="https://cdn.jsdelivr.net/npm/vue" type="text/javascript"></script>-->
   <script src="https://cdn.jsdelivr.net/npm/vue-resource" type="text/javascript"></script>
-  <script src="js/index.js"></script>
+  <script src="js/index.js?1"></script>
 </head>
 
 <body onload="window.index()">
@@ -95,6 +95,21 @@
         </tr>
       </tfoot>
     </table>
+    <hr/>
+    <table cellpadding="4" class="table1">
+      <thead>
+        <tr align="center">
+          <th v-for="col of http_response.data.Table.Columns">{{col}}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr align="center" v-for="row of http_response.data.Table.Rows">
+          <td v-for="col of row">{{col}}</td>
+        </tr>
+      </tbody>
+    </table>
+    <hr/>
+    <textarea v-model="http_response.raw" style="min-width: 500px; min-height: 80px;"></textarea>
     <hr/>
   </div>
 

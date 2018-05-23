@@ -37,6 +37,12 @@ window.index = function () {
     }
     return ret
   }
+  var objectToString = function (obj) {
+    var str = Object.keys(obj).map(function(key){ 
+      return encodeURIComponent(key) + '=' + encodeURIComponent(obj[key]);
+    }).join('&')
+    return str
+  }
   var dictionary_name_to_title = function(name) {
     var obj = {};
     obj['firadio_uc'] = '认证中心';
@@ -94,6 +100,13 @@ window.index = function () {
         url: window.location.protocol + '//' + window.location.hostname + ':' + window.location.port,
         path: '/proc',
         params: {}
+      },
+      http_response: {
+        raw: '',
+        data: {
+          Table: {
+          }
+        }
       }
     },
     methods: {
@@ -112,11 +125,17 @@ window.index = function () {
           }
           this.http_request.params[row.name] = row.value
         }
-        alert(JSON.stringify(this.http_request))
-        this.$http.get(this.http_request.url + this.http_request.path, this.http_request.params).then(function (res) {
-          alert(JSON.stringify(res.data))
+        // alert(JSON.stringify(this.http_request))
+        var url = this.http_request.url + this.http_request.path
+        var urlquery = objectToString(this.http_request.params)
+        if (urlquery) {
+          url += '?' + urlquery
+        }
+        this.$http.get(url).then(function (res) {
+          this.http_response.raw = JSON.stringify(res.data)
+          this.http_response.data = res.data
         }, function (res) {
-          alert(res.status)
+          alert('error in http: ' + res.status)
         })
       },
       select_action_change: function () {

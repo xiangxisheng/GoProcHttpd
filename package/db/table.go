@@ -11,11 +11,13 @@ type Table struct {
     Rows [][]interface{}
 }
 
-func GetTableBySql(sqlstr string) (Table, error) {
-    var table Table = Table{}
+func GetTableBySql(sqlstr string, params []interface{}) (Table, error) {
+    table := Table{}
+    stmt, err := sqlDB.Prepare(sqlstr)
+    if checkErr(err, "sqlDB.Prepare") { return table, err }
     // Execute the query
-    rows, err := sqlDB.Query(sqlstr)
-    if checkErr(err, "sqlDB.Query") { return table, err }
+    rows, err := stmt.Query(params...)
+    if checkErr(err, "stmt.Query") { return table, err }
     var table_rows [][]interface{}
     // Get column names
     columns, err := rows.Columns()

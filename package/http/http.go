@@ -39,7 +39,7 @@ func ListenAndServe() {
     //http请求处理
     http.Handle("/css/", http.FileServer(http.Dir("template")))
     http.Handle("/js/", http.FileServer(http.Dir("template")))
-    http.HandleFunc("/proc", HandlerProc)
+    http.HandleFunc("/proc", HandlerProcInfo)
     http.HandleFunc("/proc/", HandlerProcCall)
     if false {
         http.HandleFunc("/", HandlerRoot)
