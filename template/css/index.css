@@ -16,3 +16,11 @@ table td {
 .table1 td {
   border: 1px solid rgb(170, 170, 170);
 }
+
+.http_header input {
+  width: 300px;
+}
+
+.http_params input {
+  width: 150px;
+}

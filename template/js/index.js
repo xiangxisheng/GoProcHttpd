@@ -1,4 +1,4 @@
-window.index=function(){
+window.index = function () {
   var table_htoa = function (tableObj) {
     if (!tableObj.hasOwnProperty('Columns')) {
       alert('have no tableObj.Columns')
@@ -88,21 +88,46 @@ window.index=function(){
         module: {},
         object: {},
         action: {}
+      },
+      http_request: {
+        method: 'get',
+        url: window.location.protocol + '//' + window.location.hostname + ':' + window.location.port,
+        path: '/proc',
+        params: {}
       }
     },
     methods: {
       click1: function () {
+        // 刷新proc数据
         this.update()
       },
       click2: function () {
-        var t = this.PMOA.action[this.config_pmoa()]
-        alert(JSON.stringify(t))
+        // 执行行为操作
+        const rows = this.PMOA.action[this.config_pmoa()]
+        this.http_request.params = {}
+        for (var i = 0; i < rows.length; i++) {
+          const row = rows[i]
+          if (!row.hasOwnProperty('value')) {
+            continue;
+          }
+          this.http_request.params[row.name] = row.value
+        }
+        alert(JSON.stringify(this.http_request))
+        this.$http.get(this.http_request.url + this.http_request.path, this.http_request.params).then(function (res) {
+          alert(JSON.stringify(res.data))
+        }, function (res) {
+          alert(res.status)
+        })
+      },
+      select_action_change: function () {
+        this.http_request.path = '/proc/' + this.config.project + '/' + this.config.module + '_' + this.config.object + '_' + this.config.action
       },
       update: function () {
         this.$http.get('/proc', {}).then(function (res) {
           // alert(res.data)
           this.table.hashRows = table_htoa(res.data.Table)
           this.procTable(this.table.hashRows)
+          this.select_action_change()
         }, function (res) {
           alert(res.status)
         })

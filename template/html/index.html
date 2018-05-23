@@ -38,7 +38,7 @@
       </option>
     </select>
     <hr/>
-    行为：<select v-model='config.action'>
+    行为：<select v-model='config.action' v-on:change="select_action_change">
       <option v-if="PMOA.object[config.project+'_'+config.module+'_'+config.object]" value="">--选择行为--</option>
       <option v-for="row of PMOA.object[config.project+'_'+config.module+'_'+config.object]" :key="row.name" :value="row.name">
         {{row.name}} ({{row.title}})
@@ -46,22 +46,54 @@
     </select>
     <hr/>
     <table cellpadding="4" class="table1" v-if="exist_pmoa()">
-      <tr align="center" v-if="count_param() > 0">
-        <td>参数名</td>
-        <td>输入框</td>
-        <td>说明</td>
-      </tr>
-      <tr align="center" v-if="count_param() == 0">
-        <td colspan="3">该行为不需要提供任何参数</td>
-      </tr>
-      <tr align="center" v-for="row of PMOA.action[config.project+'_'+config.module+'_'+config.object+'_'+config.action]" :key="row.name">
-        <td>{{row.name}}</td>
-        <td><input v-model="row.value" value="" /></td>
-        <td>{{row.title}}</td>
-      </tr>
-      <tr align="center">
-        <td colspan="3"><button v-on:click="click2">立即查询</button></td>
-      </tr>
+      <thead>
+        <tr align="center" v-if="count_param() > 0">
+          <th>参数名</th>
+          <th>输入框</th>
+          <th>说明</th>
+        </tr>
+      </thead>
+      <tbody class="http_header">
+        <tr align="center">
+          <td>url</td>
+          <td>
+            <input v-model="http_request.url" />
+          </td>
+          <td>请求网址</td>
+        </tr>
+        <tr align="center">
+          <td>path</td>
+          <td>
+            <input v-model="http_request.path" />
+          </td>
+          <td>执行路径</td>
+        </tr>
+      </tbody>
+    </table>
+    <hr/>
+    <table cellpadding="4" class="table1" v-if="exist_pmoa()">
+      <thead>
+        <tr align="center" v-if="count_param() > 0">
+          <th>参数名</th>
+          <th>输入框</th>
+          <th>说明</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr align="center" v-if="count_param() == 0">
+          <td colspan="3">该行为不需要提供任何参数</td>
+        </tr>
+        <tr align="center" v-for="row of PMOA.action[config.project+'_'+config.module+'_'+config.object+'_'+config.action]" :key="row.name" class="http_params">
+          <td>{{row.name}}</td>
+          <td><input v-model="row.value" value="" /></td>
+          <td>{{row.title}}</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr align="center">
+          <th colspan="3"><button v-on:click="click2">立即查询</button></th>
+        </tr>
+      </tfoot>
     </table>
     <hr/>
   </div>
