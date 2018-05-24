@@ -3,7 +3,7 @@ package db
 import (
     "fmt"
     "os"
-    //"strings"
+    "strings"
     "time"
     "database/sql"
     _ "github.com/go-sql-driver/mysql"
@@ -24,7 +24,7 @@ func checkErr(err error, title string) bool {
 }
 
 func ErrorMsg(msg string) string {
-    if msg == "invalid connection" {
+    if strings.Contains(msg, "invalid connection") {
         msg = "无效的连接（可能空闲连接超时被服务器断开）"
     }
     return msg

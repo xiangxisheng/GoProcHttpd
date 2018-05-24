@@ -43,6 +43,19 @@ window.index = function () {
     }).join('&')
     return str
   }
+  var is_empty = function (_input) {
+    if (_input === null) {
+      return true
+    }
+    const _typeof = typeof(_input)
+    if (_typeof === 'string' && _input.length == 0) {
+      return true
+    }
+    if (_typeof === 'number' && _input == 0) {
+      return true
+    }
+    return false
+  }
   var dictionary_name_to_title = function(name) {
     var obj = {};
     obj['firadio_uc'] = '认证中心';
@@ -97,14 +110,18 @@ window.index = function () {
       },
       http_request: {
         method: 'get',
-        url: window.location.protocol + '//' + window.location.hostname + ':' + window.location.port,
+        urlpre: window.location.protocol + '//' + window.location.hostname + ':' + window.location.port,
         path: '/proc',
+        query: '',
+        urlfull: '',
         params: {}
       },
       http_response: {
         raw: '',
         data: {
           Table: {
+            Columns: [],
+            Rows: []
           }
         }
       }
@@ -125,13 +142,21 @@ window.index = function () {
           }
           this.http_request.params[row.name] = row.value
         }
-        // alert(JSON.stringify(this.http_request))
-        var url = this.http_request.url + this.http_request.path
-        var urlquery = objectToString(this.http_request.params)
-        if (urlquery) {
-          url += '?' + urlquery
+        this.http_request.query = objectToString(this.http_request.params)
+        this.click3()
+      },
+      click3: function () {
+        var sUrlFull = this.http_request.urlpre + this.http_request.path
+        if (this.http_request.query) {
+          sUrlFull += '?' + this.http_request.query
         }
-        this.$http.get(url).then(function (res) {
+        this.http_request.urlfull = sUrlFull
+        // 发起HTTP请求
+        this.$http.get(sUrlFull).then(function (res) {
+          if (!is_empty(res.data.Message)) {
+            alert("接口返回错误：" + res.data.Message)
+            // return
+          }
           this.http_response.raw = JSON.stringify(res.data)
           this.http_response.data = res.data
         }, function (res) {
@@ -143,7 +168,10 @@ window.index = function () {
       },
       update: function () {
         this.$http.get('/proc', {}).then(function (res) {
-          // alert(res.data)
+          if (!is_empty(res.data.Message)) {
+            alert("接口返回错误：" + res.data.Message)
+            // return
+          }
           this.table.hashRows = table_htoa(res.data.Table)
           this.procTable(this.table.hashRows)
           this.select_action_change()
@@ -226,8 +254,26 @@ window.index = function () {
       exist_pmoa: function () {
         return this.PMOA.action.hasOwnProperty(this.config_pmoa())
       },
-      count_param: function () {
+      count_PMOA: function () {
         return this.PMOA.action[this.config_pmoa()].length
+      },
+      count_TableRows: function () {
+        if (!this.http_response.data.Table.hasOwnProperty('Rows')) {
+          return 0
+        }
+        if (this.http_response.data.Table.Rows === null) {
+          return 0
+        }
+        return this.http_response.data.Table.Rows.length
+      },
+      count_TableColumns: function () {
+        if (!this.http_response.data.Table.hasOwnProperty('Columns')) {
+          return 0
+        }
+        if (this.http_response.data.Table.Columns === null) {
+          return 0
+        }
+        return this.http_response.data.Table.Columns.length
       }
     }
   })

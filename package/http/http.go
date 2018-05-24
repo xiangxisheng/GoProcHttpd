@@ -25,6 +25,9 @@ func checkErr(err error, title string) bool {
 }
 
 func ErrorMsg(msg string) string {
+    if strings.Contains(msg, "invalid connection") {
+        msg = "无效的连接（可能空闲连接超时被服务器断开）"
+    }
     if strings.Contains(msg, "bind: Only one usage") {
         msg = "端口被占用"
     }
