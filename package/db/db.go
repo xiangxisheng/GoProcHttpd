@@ -11,7 +11,6 @@ import (
 
 var err error
 var sqlDB*sql.DB
-var timer1 *time.Timer
 
 func checkErr(err error, title string) bool {
     if err != nil {
@@ -32,31 +31,17 @@ func ErrorMsg(msg string) string {
 }
 
 func Open(driver string, iqn string) (error) {
-    go Timer()
     // Open database connection
     sqlDB, err = sql.Open(driver, iqn)
     if checkErr(err, "sql.Open") { return err }
+    // 取得数据库【全局变量】
+    GetGlobalVariables()
+    // 开始防掉线定时器
+    go Timer()
     return err
 }
 
 func Close() {
     sqlDB.Close()
-}
-
-func Timer() {
-    timer1 = time.NewTimer(0)
-    for {
-        select {
-        case <-timer1.C:
-            fmt.Print("\nsqlDB.Ping()..")
-            sqlDB.Ping()
-            fmt.Print("\nsqlDB.Ping()..OK!")
-            TimerReset()
-        }
-    }
-}
-
-func TimerReset() {
-    timer1.Reset(time.Second * 60)
 }
 
