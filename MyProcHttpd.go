@@ -11,9 +11,10 @@ import (
 )
 
 func main() {
+    fmt.Print("【HTTP开放接口】服务器")
     arg_num := len(os.Args)
-    if false{
-        fmt.Printf("the num of input is %d\n", arg_num)
+    if false {
+        fmt.Printf("\nthe num of input is %d", arg_num)
     }
     http.ListenAndServe()
 }

@@ -53,7 +53,7 @@
         </option>
       </select>
     </label>
-    <label v-if="exist_pmoa()">
+    <div v-if="exist_pmoa()">
       <hr/>
       接口调试 （普通模式）<br/>
       <table cellpadding="4" class="table1">
@@ -66,7 +66,7 @@
         </thead>
         <tbody>
           <tr align="center" v-if="count_PMOA() == 0">
-            <td colspan="3">该行为不需要提供任何参数</td>
+            <td colspan="3">该行为无需提供任何参数</td>
           </tr>
           <tr align="center" v-for="row of PMOA.action[config.project+'_'+config.module+'_'+config.object+'_'+config.action]" :key="row.name" class="http_params">
             <td>{{row.name}}</td>
@@ -80,8 +80,8 @@
           </tr>
         </tfoot>
       </table>
-    </label>
-    <label v-if="count_TableColumns() > 0"/>
+    </div>
+    <div v-if="count_TableColumns() > 0"/>
       <hr/>
       <table cellpadding="4" class="table1">
         <thead>
@@ -100,8 +100,8 @@
           </tr>
         </tbody>
       </table>
-    </label>
-    <label v-if="exist_pmoa()">
+    </div>
+    <div v-if="exist_pmoa()">
       <hr/>
       接口调试 （高级模式）<br/>
       <table cellpadding="4" class="table1">
@@ -131,15 +131,15 @@
           </tr>
         </tfoot>
       </table>
-    </label>
-    <label v-if="http_response.raw">
+    </div>
+    <div v-if="http_response.raw">
       <hr/>
       HTTP 发起请求的完整URL<br />
       <input v-model="http_request.urlfull" style="width: 500px;" />
       <hr/>
       HTTP 服务器返回的JSON字符串<br />
       <textarea v-if="http_response.raw" v-model="http_response.raw" style="min-width: 500px; min-height: 80px;"></textarea>
-    </label>
+    </div>
     <hr/>
   </div>
 

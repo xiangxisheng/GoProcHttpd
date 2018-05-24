@@ -20,7 +20,7 @@ func WriteJSON(w http.ResponseWriter, outputData OutputData) {
     }
     outputJSON,err:=json.Marshal(outputData)
     if err != nil {
-        //fmt.Println(string(outputJSON))
+        //fmt.Print("\n", string(outputJSON))
         return
     }
     io.WriteString(w, string(outputJSON))

@@ -28,6 +28,7 @@ func GetProcParam(sDbName string, sProcName string) ([]ProcParam, error) {
     // 2：执行查询
     rows, err := stmt.Query(sProcName, sDbName)
     if checkErr(err, "GetProcParam.stmt.Query") { return aProcParam, err }
+    TimerReset()
     // 3：取得列
     columns, err := rows.Columns()
     if checkErr(err, "GetProcParam.rows.Columns") { return aProcParam, err }

@@ -17,7 +17,7 @@ func checkErr(err error, title string) bool {
     if err != nil {
         date := time.Now().Format("15:04:05.999")
         var msg string = ErrorMsg(err.Error())
-        fmt.Fprintf(os.Stderr, "[Error] %s %s %s\n", date, title, msg)
+        fmt.Fprintf(os.Stderr, "\n[Error] %s %s %s", date, title, msg)
         return true
         panic(err.Error()) // proper error handling instead of panic in your app
     }
@@ -52,7 +52,7 @@ func ListenAndServe() {
 
     //绑定监听地址和端口
     listen_sockets := "0.0.0.0:3380"
-    fmt.Printf("http.ListenAndServe At %s\n", listen_sockets)
+    fmt.Printf("\nhttp.ListenAndServe At %s", listen_sockets)
     err = http.ListenAndServe(listen_sockets, http_handler)
     if checkErr(err, "http.ListenAndServe") { return }
 

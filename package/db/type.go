@@ -16,7 +16,7 @@ func GetTypeByBytes(rawBytes sql.RawBytes)string {
     var max byte = 0
     for i, char := range rawBytes {
         if false{
-            fmt.Println(i, ", ", char)
+            fmt.Print("\n", i, ", ", char)
         }
         if char < min {
             min = char

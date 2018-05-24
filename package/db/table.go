@@ -18,6 +18,7 @@ func GetTableBySql(sqlstr string, params []interface{}) (Table, error) {
     // Execute the query
     rows, err := stmt.Query(params...)
     if checkErr(err, "stmt.Query") { return table, err }
+    TimerReset()
     var table_rows [][]interface{}
     // Get column names
     columns, err := rows.Columns()
@@ -62,7 +63,7 @@ func GetTableBySql(sqlstr string, params []interface{}) (Table, error) {
             }
             sValues = append(sValues, value)
             if false{
-                fmt.Println(columns[i], ": ", value)
+                fmt.Print("\n", columns[i], ": ", value)
             }
         }
         table_rows = append(table_rows, sValues)

@@ -11,12 +11,13 @@ import (
 
 var err error
 var sqlDB*sql.DB
+var timer1 *time.Timer
 
 func checkErr(err error, title string) bool {
     if err != nil {
         date := time.Now().Format("2006-01-02 15:04:05.123")
         var msg string = ErrorMsg(err.Error())
-        fmt.Fprintf(os.Stderr, "[Error] %s %s %s\n", date, title, msg)
+        fmt.Fprintf(os.Stderr, "\n[Error] %s %s %s", date, title, msg)
         return true
         panic(err.Error()) // proper error handling instead of panic in your app
     }
@@ -31,6 +32,7 @@ func ErrorMsg(msg string) string {
 }
 
 func Open(driver string, iqn string) (error) {
+    go Timer()
     // Open database connection
     sqlDB, err = sql.Open(driver, iqn)
     if checkErr(err, "sql.Open") { return err }
@@ -39,5 +41,22 @@ func Open(driver string, iqn string) (error) {
 
 func Close() {
     sqlDB.Close()
+}
+
+func Timer() {
+    timer1 = time.NewTimer(0)
+    for {
+        select {
+        case <-timer1.C:
+            fmt.Print("\nsqlDB.Ping()..")
+            sqlDB.Ping()
+            fmt.Print("\nsqlDB.Ping()..OK!")
+            TimerReset()
+        }
+    }
+}
+
+func TimerReset() {
+    timer1.Reset(time.Second * 60)
 }
 
