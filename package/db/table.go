@@ -1,8 +1,9 @@
 package db
 
 import (
-    "strconv"
     "fmt"
+    "strconv"
+    "time"
     "database/sql"
 )
 
@@ -13,11 +14,13 @@ type Table struct {
 
 func GetTableBySql(sqlstr string, params []interface{}) (Table, error) {
     table := Table{}
+    timenow1 := time.Now()
     stmt, err := sqlDB.Prepare(sqlstr)
     if checkErr(err, "sqlDB.Prepare") { return table, err }
     // Execute the query
     rows, err := stmt.Query(params...)
     if checkErr(err, "stmt.Query") { return table, err }
+    timediff1 = time.Now().Sub(timenow1)
     TimerReset()
     var table_rows [][]interface{}
     // Get column names

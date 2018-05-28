@@ -2,9 +2,10 @@ package db
 
 import (
     //"fmt"
-    "strings"
-    "database/sql"
     "strconv"
+    "strings"
+    "time"
+    "database/sql"
 )
 
 //ProcParam
@@ -23,11 +24,13 @@ func GetProcParam(sDbName string, sProcName string) ([]ProcParam, error) {
     var aProcParam []ProcParam
     sqlstr := "SELECT PARAMETER_NAME,DATA_TYPE,CHARACTER_MAXIMUM_LENGTH,NUMERIC_PRECISION,NUMERIC_SCALE FROM `information_schema`.`PARAMETERS` WHERE SPECIFIC_NAME=? AND SPECIFIC_SCHEMA=?"
     // 1：预编译
+    timenow1 := time.Now()
     stmt, err := sqlDB.Prepare(sqlstr)
     if checkErr(err, "GetProcParam.sqlDB.Prepare") { return aProcParam, err }
     // 2：执行查询
     rows, err := stmt.Query(sProcName, sDbName)
     if checkErr(err, "GetProcParam.stmt.Query") { return aProcParam, err }
+    timediff1 = time.Now().Sub(timenow1)
     TimerReset()
     // 3：取得列
     columns, err := rows.Columns()
